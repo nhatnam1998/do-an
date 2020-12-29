@@ -28,7 +28,7 @@ public class Message {
 
     private LocalDateTime receivedDate;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "user_id")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id",referencedColumnName="id")
     private User user;
 }

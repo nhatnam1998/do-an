@@ -5,6 +5,7 @@ import java.util.List;
 import epu.aeshop.entity.Category;
 import epu.aeshop.entity.Product;
 import epu.aeshop.entity.Seller;
+import epu.aeshop.vo.ProductVO;
 
 public interface ProductService {
     List<Product> getAll();
@@ -20,4 +21,8 @@ public interface ProductService {
     List<Product> getProductsBySeller(Seller seller);
 
     List<Product> getProductsByName(String name);
+    
+    List<ProductVO> getSearch();
+
+	List<ProductVO> searchByES(String searchWord) throws Exception;
 }

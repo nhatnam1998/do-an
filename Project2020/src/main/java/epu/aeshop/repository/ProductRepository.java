@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import epu.aeshop.entity.Category;
 import epu.aeshop.entity.Product;
 import epu.aeshop.entity.Seller;
+import epu.aeshop.vo.ProductVO;
 
 import java.util.List;
 
@@ -18,4 +19,7 @@ public interface ProductRepository extends CrudRepository<Product, Long> {
 
     @Query("SELECT p FROM Product p WHERE p.name LIKE ?1 ")
     List<Product> findProductsByName(String name);
+    
+    @Query("SELECT new epu.aeshop.vo.ProductVO(p.id, p.name, p.description, p.origin, p.brand) FROM Product ")
+    List<ProductVO> getSearch();
 }

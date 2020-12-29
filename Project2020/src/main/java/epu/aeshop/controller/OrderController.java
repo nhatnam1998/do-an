@@ -12,8 +12,10 @@ import epu.aeshop.entity.Order;
 import epu.aeshop.entity.OrderItem;
 import epu.aeshop.entity.OrderItemStatus;
 import epu.aeshop.entity.OrderStatus;
+import epu.aeshop.entity.Product;
 import epu.aeshop.service.BuyerService;
 import epu.aeshop.service.OrderService;
+import epu.aeshop.service.ProductService;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -33,6 +35,9 @@ public class OrderController {
 
     @Autowired
     private BuyerService buyerService;
+    
+    @Autowired
+    private ProductService productService;
 
     @GetMapping("/buyer/orders/{orderId}")
     public String getOrder(@PathVariable("orderId") Long orderId, Model model) {
@@ -41,6 +46,8 @@ public class OrderController {
             for (OrderItem item : order.getOrderItems()) {
                 if (item.getOrderStatus() == OrderItemStatus.ORDERED || item.getOrderStatus() == OrderItemStatus.SHIPPED) {
                     model.addAttribute("order", order);
+                    Product product = productService.findById(item.getProduct().getId());
+                    product.setAvailable(product.getAvailable() - new Double(item.getQuantity()));
                     return "/buyer/OrderDetail";
                 }
             }
