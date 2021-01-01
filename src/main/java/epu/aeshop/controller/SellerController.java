@@ -29,6 +29,12 @@ import java.util.UUID;
 @Controller
 @RequestMapping(value = {"/seller"})
 public class SellerController {
+
+    private final String uploadPrefix = "/img/shop/";
+
+    @Autowired
+    private UploadService uploadService;
+
     @Autowired
     private SellerService sellerService;
 
@@ -140,23 +146,13 @@ public class SellerController {
     public String updateShopInfo(@Valid SellerDto dto, BindingResult result, RedirectAttributes rd) {
         // process upload shop picture.
         MultipartFile uploadPicture = dto.getUpload();
-        String homeUrl = new ApplicationHome(ShoppingApplication.class).getDir() + "\\target\\classes\\static\\img\\shop";
-        Path rootLocation = Paths.get(homeUrl);
 
-        if (!Files.exists(rootLocation)) {
-            try {
-                Files.createDirectory(rootLocation);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        String pictureName = UUID.randomUUID().toString() + "." + FilenameUtils.getExtension(uploadPicture.getOriginalFilename());
+        String pictureName = uploadPrefix + UUID.randomUUID().toString() + "." + FilenameUtils.getExtension(uploadPicture.getOriginalFilename());
 
         if (uploadPicture != null && !uploadPicture.isEmpty()) {
             try {
-                Files.copy(uploadPicture.getInputStream(), rootLocation.resolve(pictureName));
-                dto.setPicture("/img/shop/" + pictureName);
+                uploadService.save(uploadPicture, pictureName);
+                dto.setPicture(pictureName);
             } catch (Exception ex) {
                 result.rejectValue("uploadPicture", "", "Problem on saving shop picture.");
             }

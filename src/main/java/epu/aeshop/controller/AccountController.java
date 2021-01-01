@@ -22,6 +22,7 @@ import epu.aeshop.service.BuyerService;
 import epu.aeshop.service.MessageService;
 import epu.aeshop.service.SellerService;
 import epu.aeshop.service.UserService;
+import epu.aeshop.service.UploadService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,9 +41,13 @@ public class AccountController {
     private UserService userService;
     private SellerService sellerService;
     private BuyerService buyerService;
+    private final String uploadPrefix = "/img/avatar/";
 
     @Autowired
     private MessageService messageService;
+
+    @Autowired
+    private UploadService uploadService;
 
     public AccountController(UserService userService, SellerService sellerService, BuyerService buyerService) {
         this.userService = userService;
@@ -183,23 +188,13 @@ public class AccountController {
 
         // process update user avatar.
         MultipartFile uploadAvatar = profile.getUploadAvatar();
-        String homeUrl = new ApplicationHome(ShoppingApplication.class).getDir() + "\\target\\classes\\static\\img\\avatar";
-        Path rootLocation = Paths.get(homeUrl);
 
-        if (!Files.exists(rootLocation)) {
-            try {
-                Files.createDirectory(rootLocation);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        String avatarName = UUID.randomUUID().toString() + "." + FilenameUtils.getExtension(uploadAvatar.getOriginalFilename());
+        String avatarName = uploadPrefix + UUID.randomUUID().toString() + "." + FilenameUtils.getExtension(uploadAvatar.getOriginalFilename());
 
         if (uploadAvatar != null && !uploadAvatar.isEmpty()) {
             try {
-                Files.copy(uploadAvatar.getInputStream(), rootLocation.resolve(avatarName));
-                currentUser.setAvatar("/img/avatar/" + avatarName);
+                uploadService.save(uploadAvatar, avatarName);
+                currentUser.setAvatar(avatarName);
             } catch (Exception ex) {
                 result.rejectValue("uploadAvatar", "", "Problem on saving user picture.");
             }

@@ -30,6 +30,11 @@ import java.util.stream.Collectors;
 @Controller
 public class ProductController {
 
+    private final String uploadPrefix = "/img/product/";
+
+    @Autowired
+    private UploadService uploadService;
+
     @Autowired
     private ProductService productService;
 
@@ -190,22 +195,12 @@ public class ProductController {
 
         // upload file.
         MultipartFile upload = product.getUpload();
-        String homeUrl = new ApplicationHome(ShoppingApplication.class).getDir() + "\\target\\classes\\static\\img\\product";
-        Path rootLocation = Paths.get(homeUrl);
-
-        if (!Files.exists(rootLocation)) {
-            try {
-                Files.createDirectory(rootLocation);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
 
         if (upload != null && !upload.isEmpty()) {
             try {
-                String imageName = UUID.randomUUID().toString() + "." + FilenameUtils.getExtension(upload.getOriginalFilename());
-                Files.copy(upload.getInputStream(), rootLocation.resolve(imageName));
-                product.setImage("/img/product/" + imageName);
+                String imageName = uploadPrefix + UUID.randomUUID().toString() + "." + FilenameUtils.getExtension(upload.getOriginalFilename());
+                uploadService.save(upload, imageName);
+                product.setImage(imageName);
             } catch (Exception ex) {
                 result.rejectValue("upload", "", "Problem on saving product picture.");
             }
@@ -267,22 +262,12 @@ public class ProductController {
 
         // upload file.
         MultipartFile upload = product.getUpload();
-        String homeUrl = new ApplicationHome(ShoppingApplication.class).getDir() + "\\target\\classes\\static\\img\\product";
-        Path rootLocation = Paths.get(homeUrl);
-
-        if (!Files.exists(rootLocation)) {
-            try {
-                Files.createDirectory(rootLocation);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
 
         if (upload != null && !upload.isEmpty()) {
             try {
-                String imageName = UUID.randomUUID().toString() + "." + FilenameUtils.getExtension(upload.getOriginalFilename());
-                Files.copy(upload.getInputStream(), rootLocation.resolve(imageName));
-                product.setImage("/img/product/" + imageName);
+                String imageName = uploadPrefix + UUID.randomUUID().toString() + "." + FilenameUtils.getExtension(upload.getOriginalFilename());
+                uploadService.save(upload, imageName);
+                product.setImage(imageName);
             } catch (Exception ex) {
                 result.rejectValue("upload", "", "Problem on saving product picture.");
             }
