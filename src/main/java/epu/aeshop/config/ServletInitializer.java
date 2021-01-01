@@ -1,6 +1,7 @@
 package epu.aeshop.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,12 +15,22 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 import epu.aeshop.interceptor.UserInterceptor;
+import epu.aeshop.service.UploadService;
 
 @Configuration
 public class ServletInitializer implements WebMvcConfigurer {
 
     @Autowired
+    Environment env;
+
+    @Autowired
     private UserInterceptor userInterceptor;
+
+    @Bean
+    public UploadService uploadService() {
+        String uploadPath = env.getProperty("upload.path");
+        return new UploadService(uploadPath);
+    }
 
     @Bean
     public MessageSource messageSource() {
@@ -34,9 +45,8 @@ public class ServletInitializer implements WebMvcConfigurer {
     public ClassLoaderTemplateResolver templateResolver(){
         ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
         templateResolver.setPrefix("templates/");
-        templateResolver.setTemplateMode("HTML5");
+        templateResolver.setTemplateMode("HTML");
         templateResolver.setSuffix(".html");
-        templateResolver.setTemplateMode("XHTML");
         templateResolver.setCharacterEncoding("UTF-8");
         templateResolver.setOrder(1);
         templateResolver.setCacheable(false);
