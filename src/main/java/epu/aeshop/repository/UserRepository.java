@@ -16,7 +16,12 @@ public interface UserRepository extends CrudRepository<User, Long> {
     User findByEmail(String email);
 
     // get last 5 unread notify message of user by email.
-    @Query(value = "select m from Message m join User u on m.user = u.id where m.read = 0 and  u.email = ?1 and rownum < 5 order by m.receivedDate desc")
+    @Query(value =
+        "select m.id, m.content"
+        + " from message m join user u on m.user_id = u.id"
+        + " where m.read = 0 and u.email = ?1"
+        + " order by m.received_date desc",
+    nativeQuery = true)
     List<Message> getLast5UnreadNotifyMessageByUserEmail(String email);
 
 }
