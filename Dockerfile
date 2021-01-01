@@ -1,5 +1,5 @@
-FROM openjdk:11-jdk-slim
+FROM arm64v8/openjdk:11-jdk-slim
 
 WORKDIR /app
-COPY target/ .
-ENTRYPOINT [ "java", "-jar", "e-commerce-0.0.1-SNAPSHOT.war" ]
+COPY target/*.war app.war
+ENTRYPOINT [ "java", "-jar", "app.war" ]
