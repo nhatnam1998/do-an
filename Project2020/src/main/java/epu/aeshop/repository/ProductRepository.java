@@ -20,6 +20,6 @@ public interface ProductRepository extends CrudRepository<Product, Long> {
     @Query("SELECT p FROM Product p WHERE p.name LIKE ?1 ")
     List<Product> findProductsByName(String name);
     
-    @Query("SELECT new epu.aeshop.vo.ProductVO(p.id, p.name, p.description, p.origin, p.brand) FROM Product ")
+    @Query("SELECT new epu.aeshop.vo.ProductVO(p.id, p.name, p.description, p.origin, p.brand) FROM Product p ")
     List<ProductVO> getSearch();
 }
