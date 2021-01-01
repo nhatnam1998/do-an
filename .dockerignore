@@ -1,0 +1,5 @@
+src/
+.mvn
+target/*-SNAPSHOT.war.original
+target/*-SNAPSHOT
+bower_components/
