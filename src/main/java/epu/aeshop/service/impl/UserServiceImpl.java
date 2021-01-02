@@ -40,13 +40,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateUser(User user) {
         // does this user change the password.
-        User existsUser = userRepository.findById(user.getId()).get();
-        boolean isMatches  = bCryptPasswordEncoder.matches(user.getPassword(), existsUser.getPassword());
-        if(!isMatches){
-            // update the password.
-            String hashPassword = bCryptPasswordEncoder.encode(user.getPassword());
-            user.setPassword(hashPassword);
-        }
+//        User existsUser = userRepository.findById(user.getId()).get();
+//        boolean isMatches  = bCryptPasswordEncoder.matches(user.getPassword(), existsUser.getPassword());
+//        if(!isMatches){
+//            // update the password.
+//            String hashPassword = bCryptPasswordEncoder.encode(user.getPassword());
+//            user.setPassword(hashPassword);
+//        }
 
         // persisted user to db.
         return userRepository.save(user);

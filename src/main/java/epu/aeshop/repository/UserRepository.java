@@ -2,6 +2,7 @@ package epu.aeshop.repository;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import epu.aeshop.entity.Message;
@@ -13,7 +14,8 @@ import java.util.List;
 public interface UserRepository extends CrudRepository<User, Long> {
 
     // find user by email
-    User findByEmail(String email);
+	@Query(value = "Select u from User u Where u.email =:email")
+    User findByEmail(@Param("email") String email);
 
     // get last 5 unread notify message of user by email.
     @Query(value =

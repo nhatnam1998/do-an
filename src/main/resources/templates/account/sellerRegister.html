@@ -154,14 +154,22 @@
 				</div>
 				<div class="form-group">
 					<div class="form-label-group">
-						<textarea
+					<input type="text"
+						       name="description"
+						       id="description"
+						       class="form-control"
+						       th:placeholder="#{form.shopDescription}"
+						       th:field="*{description}">
+						<label for="description"
+						       th:text="#{form.shopDescription}">Description</label>
+						<!-- <textarea
 						       th:rows="5"
 						       name="description"
 						       id="description"
 						       class="form-control"
 						       th:field="*{description}"></textarea>
 						<label for="description"
-						       th:text="#{form.shopDescription}">Description</label>
+						       th:text="#{form.shopDescription}">Description</label> -->
 					</div>
 				</div>
 				

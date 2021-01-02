@@ -55,7 +55,10 @@
                             <i class="fa fas fa-cart-plus"></i> Thêm vào giỏ hàng
                         </button>
                     </form>
-                    <p class="card-text" th:text="${product.description}"></p>
+                    <p class="card-text" th:text="'Chi tiết sản phẩm: ' +${product.description}"></p>
+                    <p class="card-text" th:text="'Sale: ' +${product.sale} +'%'"></p>
+                    <p class="card-text" th:text="'Nhà sản xuất: '+ ${product.brand}"></p>
+                    <p class="card-text" th:text="'Xuất sứ: '+ ${product.origin}"></p>
 
 <!--                    <span class="text-warning" id="rating">&#9733; &#9733; &#9733; &#9733; &#9734;</span>-->
 <!--                    <span th:if="${rating == 0}">No rating</span>-->
