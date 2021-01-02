@@ -179,12 +179,12 @@ public class OrderController {
 			- Neu trang thai don hang OK, tien hanh cap nhat vao DB, tra lai cho VNPAY RspCode=00
 			- Neu trang thai don hang (da cap nhat roi) => khong cap nhat vao DB, tra lai cho VNPAY RspCode=02
 			*/
-			boolean checkOrderStatus = order.getStatus() == null;
+			boolean checkOrderStatus = order.getStatus() == OrderStatus.NEW;
 
 			if (checkOrderStatus) {
 				if ("00".equals(request.getParameter("vnp_ResponseCode"))) {
 					//sucess
-					order.setStatus(OrderStatus.CANCELED);
+					order.setStatus(OrderStatus.COMPLETED);
 					order.setPaymentInfo(
 						"VNPAY " +
 						request.getParameter("vnp_CardType") +
@@ -197,7 +197,7 @@ public class OrderController {
 					);
 				} else {
 					// error pay
-					order.setStatus(OrderStatus.COMPLETED);
+					order.setStatus(OrderStatus.CANCELED);
 				}
 				
 				orderService.updateOrder(order);

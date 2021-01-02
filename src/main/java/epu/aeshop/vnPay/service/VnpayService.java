@@ -33,7 +33,7 @@ public class VnpayService {
         vnp_Params.put("vnp_Locale", "vn");
         vnp_Params.put("vnp_CurrCode", "VND");
         vnp_Params.put("vnp_TmnCode", this.website_id);
-        vnp_Params.put("vnp_ReturnUrl", this.base_url + "/dathang/chitiet/" + txnRef);
+        vnp_Params.put("vnp_ReturnUrl", this.base_url + "/buyer/orders/" + txnRef);
         vnp_Params.put("vnp_Amount", String.valueOf(amount * 100));
         vnp_Params.put("vnp_TxnRef", txnRef);
         vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang " + txnRef);
