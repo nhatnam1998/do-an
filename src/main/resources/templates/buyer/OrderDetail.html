@@ -23,7 +23,7 @@
                 <dd class="col-sm-9" th:text="${order.phoneNumber}"></dd>
 
                 <dt class="col-sm-3">Total Amount</dt>
-                <dd class="col-sm-9" th:text="'$' + ${order.totalAmount}"></dd>
+                <dd class="col-sm-9" th:text="${order.totalAmount} + 'đ'"></dd>
 
                 <dt class="col-sm-3">Payment Info</dt>
                 <dd class="col-sm-9" th:text="${order.paymentInfo}"></dd>

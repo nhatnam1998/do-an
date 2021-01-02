@@ -27,7 +27,7 @@
                 <dd class="col-sm-9" th:text="${item.quantity}"></dd>
 
                 <dt class="col-sm-3">Total Price</dt>
-                <dd class="col-sm-9" th:text="'$' + ${totalPrice}"></dd>
+                <dd class="col-sm-9" th:text="${totalPrice} + 'đ'"></dd>
 
                 <dt class="col-sm-3">Shipping Address</dt>
                 <dd class="col-sm-9" th:text="${item.order.shippingAddress}"></dd>

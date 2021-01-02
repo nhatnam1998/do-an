@@ -79,7 +79,7 @@ $(document).ready(function () {
                                                 <span class="text-info font-italic"><a href="/product/${item.id}">${item.productName}</a></span>
                                             </div>
                                             <div class="row">
-                                                <span>$${item.productPrice}</span>
+                                                <span>${item.productPrice}đ</span>
                                             </div>
                                         </td>                                        
                                     </tr> `;

@@ -38,7 +38,7 @@
                     <tr th:each="order: ${orders}">
                         <td th:text="${order.status}"></td>
                         <td th:text="${order.buyer.user.firstName} + ' ' + ${order.buyer.user.lastName}"></td>
-                        <td th:text="'$' + ${order.totalAmount}"></td>
+                        <td th:text="${order.totalAmount} + 'đ'"></td>
                         <td th:text="${order.shippingAddress}"></td>
                         <td th:text="${#temporals.format(order.orderedDate, 'dd-MM-yyyy HH:mm')}"></td>
                         <td>
