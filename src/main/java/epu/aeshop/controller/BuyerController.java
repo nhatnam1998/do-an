@@ -5,6 +5,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.ObjectUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -156,15 +157,18 @@ public class BuyerController {
         return "/buyer/Checkout";
     }
 
-    @PostMapping("/buyer/order")
-    public String placeOrder(@Valid Order order, Model model) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.findByEmail(auth.getName());
-        Buyer buyer = buyerService.getBuyerByUser(user);
-        orderService.saveOrder(buyer, order);
-        Long orderId = order.getId();
-        return "redirect:/buyer/orders/" + orderId;
-    }
+//    @PostMapping("/buyer/order")
+//    public String placeOrder(@Valid Order order, Model model) {
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        User user = userService.findByEmail(auth.getName());
+//        Buyer buyer = buyerService.getBuyerByUser(user);
+//        orderService.saveOrder(buyer, order);
+//        Long orderId = order.getId();
+//        if(ObjectUtils.isEmpty(order.getTotalAmount())){
+//        	return "index";
+//        }
+//        return "redirect:/buyer/orders/" + orderId;
+//    }
 
     @GetMapping("/buyer/item/{itemId}/review")
     public String getReview(@PathVariable("itemId") Long itemId, @ModelAttribute("review") String review, Model model) {

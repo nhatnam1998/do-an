@@ -1,5 +1,6 @@
 package epu.aeshop.controller;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -55,27 +56,28 @@ public class SearchElasticController {
 	@Autowired
 	private CategoryService categoryService;
 
-	@GetMapping("/elastic-search")
-    public String indexSearch(@RequestParam("searchWord") String searchWord ,Model model) {
-        List<Product> products = productService.getAll().stream()
-                .filter(x -> x.getName().toLowerCase().contains(searchWord.toLowerCase())).collect(Collectors.toList());
-
-        Collections.shuffle(products, new Random());
-
-        model.addAttribute("products", products);
-        List<Advert> adverts = advertService.getAdverts();
-        model.addAttribute("adverts", adverts);
-        List<Category> categories = categoryService.getCategories();
-        model.addAttribute("categories", categories);
-
-
-
-        return "index";
-    }
-	
+//	@GetMapping("/elastic-search")
+//    public String indexSearch(@RequestParam("searchWord") String searchWord ,Model model) {
+//        List<ProductVO> products = new ArrayList<ProductVO>();
+//		try {
+//			products = productService.searchByES(searchWord);
+//			 Collections.shuffle(products, new Random());
+//		     model.addAttribute("products", products);
+//		     List<Advert> adverts = advertService.getAdverts();
+//		        model.addAttribute("adverts", adverts);
+//		        List<Category> categories = categoryService.getCategories();
+//		        model.addAttribute("categories", categories);
+//		} catch (Exception e) {
+//			return "403";
+//		}
+//
+//		 return "index";
+//       
+//    }
+//	
 	@GetMapping("/run-index")
 	 public String indexES() {
-		 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//		 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 //		 if(authentication != null) {
 //			 authentication.getName().equals(anObject)
 //		 }
