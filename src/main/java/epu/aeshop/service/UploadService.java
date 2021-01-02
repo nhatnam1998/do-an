@@ -10,14 +10,14 @@ import epu.aeshop.ShoppingApplication;
 
 public class UploadService {
 
-    private final Path root;
+    private final String root;
 
     public UploadService(String root) {
-        this.root = new ApplicationHome(ShoppingApplication.class).getDir().toPath().resolve(root);
+        this.root = Paths.get(System.getProperty("user.dir")).resolve(root).toString();
     }
 
     public void save(MultipartFile multipart, String filename) throws IOException {
-        Path target = Paths.get(this.root.toString(), filename);
+        Path target = Paths.get(this.root, filename);
         Path targetDir = target.getParent();
 
         if (!Files.exists(targetDir)) {
