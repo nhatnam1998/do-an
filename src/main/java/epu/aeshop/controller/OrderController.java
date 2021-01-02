@@ -100,10 +100,10 @@ public class OrderController {
         List<OrderItem> deliveredOrderItems = orderService.getDeliveredOrderItemsByOrder(orderId);
         OrderInfo orderInfo = new OrderInfo();
         orderInfo.setId(order.getId());
-        orderInfo.setBillingAddress(order.getBillingAddress());
         orderInfo.setBuyer(order.getBuyer());
+        orderInfo.setRecipient(order.getRecipient());
+        orderInfo.setPhoneNumber(order.getPhoneNumber());
         orderInfo.setPaymentInfo(order.getPaymentInfo());
-        orderInfo.setPaymentMethod(order.getPaymentMethod());
         orderInfo.setTotalAmount(order.getTotalAmount());
         orderInfo.setOrderItems(deliveredOrderItems);
         File file = orderService.downloadReceipt(orderInfo);

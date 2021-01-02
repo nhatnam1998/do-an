@@ -18,8 +18,8 @@ public class OrderInfo {
     private BigDecimal totalAmount = new BigDecimal(0.00);
     private Buyer buyer;
     private String shippingAddress;
-    private String billingAddress;
-    private String paymentMethod;
+    private String recipient;
+    private String phoneNumber;
     private String paymentInfo;
     private OrderStatus status = OrderStatus.NEW;
     private LocalDateTime orderedDate;

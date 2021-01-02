@@ -22,8 +22,8 @@ public class Order {
     @JoinColumn(name = "buyer_id")
     private Buyer buyer;
     private String shippingAddress;
-    private String billingAddress;
-    private String paymentMethod;
+    private String recipient;
+    private String phoneNumber;
     private String paymentInfo;
     @Enumerated(EnumType.STRING)
     private OrderStatus status = OrderStatus.NEW;

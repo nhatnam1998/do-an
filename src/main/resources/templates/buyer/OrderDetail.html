@@ -16,8 +16,11 @@
                 <dt class="col-sm-3">Shipping Address</dt>
                 <dd class="col-sm-9" th:text="${order.shippingAddress}"></dd>
 
-                <dt class="col-sm-3">Billing Address</dt>
-                <dd class="col-sm-9" th:text="${order.billingAddress}"></dd>
+                <dt class="col-sm-3">Recipient</dt>
+                <dd class="col-sm-9" th:text="${order.recipient}"></dd>
+
+                <dt class="col-sm-3">Phone Number</dt>
+                <dd class="col-sm-9" th:text="${order.phoneNumber}"></dd>
 
                 <dt class="col-sm-3">Total Amount</dt>
                 <dd class="col-sm-9" th:text="'$' + ${order.totalAmount}"></dd>
@@ -31,8 +34,8 @@
                 <dt class="col-sm-3">End Date</dt>
                 <dd class="col-sm-9" th:text="${#temporals.format(order.endDate, 'dd-MM-yyyy HH:mm')}"></dd>
 
-                <dt class="col-sm-3"></dt>
-                <dd class="col-sm-9">** With each $100, you will be given 1 point if you complete the order</dd>
+                <!-- <dt class="col-sm-3"></dt>
+                <dd class="col-sm-9">** With each $100, you will be given 1 point if you complete the order</dd> -->
             </dl>
 
         </div>

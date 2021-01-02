@@ -3,7 +3,7 @@
       xmlns:th="http://www.thymeleaf.org"
       layout:decorate="~{layouts/user}">
 <head>
-    <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.10.1.min.js"></script>
     <script type="text/javascript" th:src="@{/js/cart.js}"></script>
 </head>
 <div class="container" layout:fragment="content">
@@ -13,26 +13,32 @@
             <div class="row">
                 <div class="col-6">
                     <div class="form-group row">
-                        <label class="col-4 col-form-label"> Address:</label>
+                        <label class="col-4 col-form-label">Shipping Address:</label>
                         <div class="col-8">
                             <input type="text" class="form-control" th:field="*{shippingAddress}">
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-4 col-form-label">Billing Address</label>
+                        <label class="col-4 col-form-label">Recipient:</label>
                         <div class="col-8">
-                            <input type="text" class="form-control" th:field="*{billingAddress}">
+                            <input type="text" class="form-control" th:field="*{recipient}">
                         </div>
                     </div>
                     <div class="form-group row">
-                        <div class="form-check">
-                            <input type="checkbox" th:field="*{usingPoints}" class="form-check-input"/>
-                            <label class="form-check-label">Use my points </label>
+                        <label class="col-4 col-form-label">Phone number:</label>
+                        <div class="col-8">
+                            <input type="text" class="form-control" th:field="*{phoneNumber}">
                         </div>
                     </div>
+                    <!-- <div class="form-group row">
+                        <label class="col">
+                            <input type="checkbox" th:field="*{usingPoints}" class=""/>
+                            <span>Use my points</span>
+                        </label>
+                    </div> -->
                 </div>
                 <div class="col-6">
-                    <div class="form-group row">
+                    <!-- <div class="form-group row">
                         <label class="col-4 col-form-label">Payment Method</label>
                         <div class="col-8">
                             <select th:field="*{paymentMethod}" class="form-control">
@@ -52,7 +58,7 @@
                         <div class="col-8">
                             <input type="text" class="form-control"/>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
 

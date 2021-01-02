@@ -126,7 +126,7 @@
             <td>
               <span th:text="${order.buyer.user.firstName} + ' ' + ${order.buyer.user.lastName}"></span><br/>
               <span th:text="${order.buyer.user.email}"></span><br/>
-              <span th:text="${order.billingAddress}"></span>
+              <span th:text="${order.shippingAddress}"></span>
             </td>
           </tr>
         </table>
@@ -136,7 +136,7 @@
     <tr class="heading">
       <td>Payment Method</td>
       <td></td>
-      <td th:text="${order.paymentMethod} + '#'"></td>
+      <td>VNPAY</td>
     </tr>
     <tr class="details">
       <td col="3" th:text="${order.paymentInfo}"></td>

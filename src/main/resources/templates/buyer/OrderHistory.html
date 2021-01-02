@@ -19,7 +19,7 @@
                         <th>Status</th>
                         <th>Buyer</th>
                         <th>Total Amount</th>
-                        <th>Billing Address</th>
+                        <th>Shipping Address</th>
                         <th>Ordered Date</th>
                         <th>Action</th>
                     </tr>
@@ -29,7 +29,7 @@
                         <th>Status</th>
                         <th>Buyer</th>
                         <th>Total Amount</th>
-                        <th>Billing Address</th>
+                        <th>Shipping Address</th>
                         <th>Ordered Date</th>
                         <th>Action</th>
                     </tr>
@@ -39,7 +39,7 @@
                         <td th:text="${order.status}"></td>
                         <td th:text="${order.buyer.user.firstName} + ' ' + ${order.buyer.user.lastName}"></td>
                         <td th:text="'$' + ${order.totalAmount}"></td>
-                        <td th:text="${order.billingAddress}"></td>
+                        <td th:text="${order.shippingAddress}"></td>
                         <td th:text="${#temporals.format(order.orderedDate, 'dd-MM-yyyy HH:mm')}"></td>
                         <td>
                             <form th:object="${order}" action="#" th:action="@{/buyer/orders/} + ${order.id}">
