@@ -25,4 +25,6 @@ public interface ProductService {
     List<ProductVO> getSearch();
 
 	List<Product> searchByES(String searchWord) throws Exception;
+
+	void reIndexIPContent(Product product);
 }

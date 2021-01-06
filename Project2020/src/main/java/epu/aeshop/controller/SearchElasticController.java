@@ -3,28 +3,20 @@
  */
 package epu.aeshop.controller;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.gson.JsonObject;
 
-import epu.aeshop.entity.Advert;
-import epu.aeshop.entity.Category;
 import epu.aeshop.entity.Product;
 import epu.aeshop.service.AdvertService;
 import epu.aeshop.service.CategoryService;
@@ -33,8 +25,7 @@ import epu.aeshop.vo.ProductVO;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
-//@RestController
-@Controller
+@RestController
 public class SearchElasticController {
 	@Autowired
 	ProductService productService;
@@ -46,23 +37,7 @@ public class SearchElasticController {
 	CategoryService categoryService;
 
 	//search by elastic search
-	@GetMapping("/search")
-    public String indexSearch(@RequestParam("searchWord") String searchWord ,Model model) throws Exception {
-        List<Product> products = new ArrayList<Product>();
-			if(searchWord == null) {
-				products = productService.getAll();
-			}else {
-				products = productService.searchByES(searchWord);
-			}
-			 Collections.shuffle(products, new Random());
-		     model.addAttribute("products", products);
-		     List<Advert> adverts = advertService.getAdverts();
-		        model.addAttribute("adverts", adverts);
-		        List<Category> categories = categoryService.getCategories();
-		        model.addAttribute("categories", categories);
-		 return "index";
-       
-    }
+	// => home controller
 	
 	@GetMapping("/run-index")
 	 public String indexES() {
@@ -72,15 +47,15 @@ public class SearchElasticController {
 //		 }
 		 try {
 			 this.runIndexES();
-			 return "sucess";
+			 return "Sucess";
 		 }catch (Exception e) {
 			 log.error(e.getMessage());
-			 return "403";
+			 return "Fail";
 		}
     }
 	
 	private void runIndexES() throws Exception{
-		// su dung phien ban ElasticSearch 5.4
+		//  ElasticSearch 5.4
 		
 		String linkEsServer = "http://localhost:9200/";
 		String indexlink = linkEsServer + "es_nhatnam/";
@@ -162,8 +137,8 @@ public class SearchElasticController {
 			json.addProperty("id", productVO.getId());
 			json.addProperty("name", productVO.getName().toLowerCase());
 			json.addProperty("description", productVO.getDescription().toLowerCase());
-			json.addProperty("origin", productVO.getOrigin().toLowerCase());
-			json.addProperty("brand", productVO.getBrand().toLowerCase());
+			json.addProperty("origin", productVO.getOrigin());
+			json.addProperty("brand", productVO.getBrand());
 			try {
 				HttpEntity<String> entity = new HttpEntity<String>(json.toString(), headers);
 				restTemplate.exchange(indexlink + "product"

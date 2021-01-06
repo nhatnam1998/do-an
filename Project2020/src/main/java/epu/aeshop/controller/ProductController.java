@@ -229,6 +229,7 @@ public class ProductController {
             }
             updateProduct.setAvailable(product.getAvailable());
             updateProduct.setCategory(category);
+            productService.reIndexIPContent(updateProduct);
             productService.save(updateProduct);
         } else {
             product.setCategory(category);
@@ -298,6 +299,7 @@ public class ProductController {
         // get the product.
         product.setCategory(category);
         product.setSeller(seller);
+        productService.reIndexIPContent(product);
         productService.save(product);
 
         // send notify message to followers

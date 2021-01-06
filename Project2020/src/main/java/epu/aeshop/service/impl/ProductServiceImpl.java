@@ -12,6 +12,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.gson.JsonArray;
@@ -117,7 +120,64 @@ public class ProductServiceImpl implements ProductService {
         }
 		List<Product> lstResult = productRepository.getDataForElasticSearch(listIdProduct);
 
-		
 		return lstResult;
 	}
+	
+	@Override
+	public void reIndexIPContent(Product product) {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            RestTemplate restTemplate = new RestTemplate();
+            String linkEsServer = "http://localhost:9200/";
+    		String indexLink = linkEsServer + "es_nhatnam/";
+            headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+            ResponseEntity<String> resultSearch = null;
+            try {
+                resultSearch = restTemplate.exchange(indexLink + "/_search?q=id:" + product.getId(), HttpMethod.POST, null, String.class);
+            } catch (HttpClientErrorException e) {
+                System.out.println(new String(e.getResponseBodyAsByteArray()));
+            }
+            if (resultSearch != null) {
+                String indexID = "";
+                String fIp = resultSearch.getBody();
+                JsonParser parserGSON = new JsonParser();
+                JsonElement jsonTree = parserGSON.parse(fIp);
+                JsonObject histParent = null;
+                JsonArray histChild = null;
+                if (jsonTree.isJsonObject()) {
+                    JsonObject jsonObject = jsonTree.getAsJsonObject();
+                    histParent = jsonObject.getAsJsonObject("hits");
+                    histChild = histParent.getAsJsonArray("hits");
+                    if (histChild.size() > 0) {
+                        JsonObject fo = (JsonObject) histChild.get(0);
+                        indexID = (!fo.get("_id").toString().equals("null"))
+                                ? fo.get("_id").getAsString() : "";
+                    }
+                }
+                if(!indexID.isEmpty()) {
+                    // delete index
+                    HttpEntity<String> bodyDelete = new HttpEntity<String>(headers);
+                    ResponseEntity<String> responseDel = restTemplate.exchange(indexLink+"product/" + indexID, HttpMethod.DELETE, bodyDelete, String.class);
+                } 
+                
+                JsonObject productNew = new JsonObject();
+                productNew.addProperty("id", product.getId());
+                productNew.addProperty("name", product.getName().toLowerCase());
+                productNew.addProperty("description", product.getDescription().toLowerCase());
+                productNew.addProperty("origin", product.getOrigin());
+                productNew.addProperty("brand", product.getBrand());
+                
+                try {
+                    HttpEntity<String> entity = new HttpEntity<String>(productNew.toString(), headers);
+    				restTemplate.exchange(indexLink + "product"
+    						, HttpMethod.POST, entity,Object.class);
+                } catch (HttpClientErrorException e) {
+                	System.out.println(new String(e.getResponseBodyAsByteArray()));
+                }
+            }
+        } catch (Exception e) {
+        	System.out.println(new String(e.getMessage()));
+        }
+    }
+    
 }
