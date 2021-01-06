@@ -3,6 +3,7 @@ package epu.aeshop.repository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import epu.aeshop.entity.Category;
 import epu.aeshop.entity.Product;
@@ -22,4 +23,7 @@ public interface ProductRepository extends CrudRepository<Product, Long> {
     
     @Query("SELECT new epu.aeshop.vo.ProductVO(p.id, p.name, p.description, p.origin, p.brand) FROM Product p ")
     List<ProductVO> getSearch();
+    
+    @Query("SELECT p FROM Product p WHERE p.id IN :listId ")
+    List<Product> getDataForElasticSearch(@RequestParam("listId") List<Long> listId);
 }

@@ -24,5 +24,5 @@ public interface ProductService {
     
     List<ProductVO> getSearch();
 
-	List<ProductVO> searchByES(String searchWord) throws Exception;
+	List<Product> searchByES(String searchWord) throws Exception;
 }
