@@ -18,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -68,22 +69,23 @@ public class SearchElasticController {
 	}
 
 	@GetMapping("/run-index")
-	 public String indexES() {
+	@ResponseBody
+	public String indexES() {
 //		 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 //		 if(authentication != null) {
 //			 authentication.getName().equals(anObject)
 //		 }
 		try {
 			this.runIndexES();
-			return "sucess";
+			return "success";
 		} catch (Exception e) {
-			log.error(e.getMessage());
+			log.error(e);
 			return "403";
 		}
 	}
 
-	private void runIndexES() throws Exception{
-		String indexlink = this.elasticsearchUrl + "es_nhatnam/";
+	private void runIndexES() throws Exception {
+		String indexlink = this.elasticsearchUrl + "product/";
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		RestTemplate restTemplate = new RestTemplate();
@@ -99,32 +101,30 @@ public class SearchElasticController {
 		//create index
 		String requestParam ="{\n"
 				+ "  \"mappings\": {\n"
-				+ "    \"product\": {\n"
-				+ "      \"properties\": {\n"
-				+ "        \"id\": { \"type\": \"long\" },\n"
-				+ "        \"name\": {\n"
-				+ "          \"type\": \"text\",\n"
-				+ "          \"fields\": {\n"
-				+ "            \"keyword\": { \"type\": \"keyword\" }\n"
-				+ "          }\n"
-				+ "        },\n"
-				+ "        \"description\": {\n"
-				+ "          \"type\": \"text\",\n"
-				+ "          \"fields\": {\n"
-				+ "            \"keyword\": { \"type\": \"keyword\" }\n"
-				+ "          }\n"
-				+ "        },\n"
-				+ "        \"origin\": {\n"
-				+ "          \"type\": \"text\",\n"
-				+ "          \"fields\": {\n"
-				+ "            \"keyword\": { \"type\": \"keyword\" }\n"
-				+ "          }\n"
-				+ "        },\n"
-				+ "        \"brand\": {\n"
-				+ "          \"type\": \"text\",\n"
-				+ "          \"fields\": {\n"
-				+ "            \"keyword\": { \"type\": \"keyword\" }\n"
-				+ "          }\n"
+				+ "    \"properties\": {\n"
+				+ "      \"id\": { \"type\": \"long\" },\n"
+				+ "      \"name\": {\n"
+				+ "        \"type\": \"text\",\n"
+				+ "        \"fields\": {\n"
+				+ "          \"keyword\": { \"type\": \"keyword\" }\n"
+				+ "        }\n"
+				+ "      },\n"
+				+ "      \"description\": {\n"
+				+ "        \"type\": \"text\",\n"
+				+ "        \"fields\": {\n"
+				+ "          \"keyword\": { \"type\": \"keyword\" }\n"
+				+ "        }\n"
+				+ "      },\n"
+				+ "      \"origin\": {\n"
+				+ "        \"type\": \"text\",\n"
+				+ "        \"fields\": {\n"
+				+ "          \"keyword\": { \"type\": \"keyword\" }\n"
+				+ "        }\n"
+				+ "      },\n"
+				+ "      \"brand\": {\n"
+				+ "        \"type\": \"text\",\n"
+				+ "        \"fields\": {\n"
+				+ "          \"keyword\": { \"type\": \"keyword\" }\n"
 				+ "        }\n"
 				+ "      }\n"
 				+ "    }\n"
@@ -145,22 +145,19 @@ public class SearchElasticController {
 		List<ProductVO> lstProductVO = productService.getSearch();
 		log.info("=== START INDEX ===");
 		for(ProductVO productVO : lstProductVO) {
+			log.info(productVO);
 			JsonObject json = new JsonObject();
 			json.addProperty("id", productVO.getId());
 			json.addProperty("name", productVO.getName().toLowerCase());
-			json.addProperty("description", productVO.getDescription().toLowerCase());
-			json.addProperty("origin", productVO.getOrigin().toLowerCase());
-			json.addProperty("brand", productVO.getBrand().toLowerCase());
-			try {
-				HttpEntity<String> entity = new HttpEntity<String>(json.toString(), headers);
-				restTemplate.exchange(indexlink + "product"
-						, HttpMethod.POST, entity,Object.class);
-				log.info("============= INPUT DATA TO ES SUCESS ===============");
-			}catch(HttpClientErrorException e) {
-				log.error(e);
-			}
+			json.addProperty("description", productVO.getDescription() == null? null: productVO.getDescription().toLowerCase());
+			json.addProperty("origin", productVO.getOrigin() == null? null: productVO.getOrigin().toLowerCase());
+			json.addProperty("brand", productVO.getBrand() == null? null: productVO.getBrand().toLowerCase());
+
+			HttpEntity<String> entity = new HttpEntity<String>(json.toString(), headers);
+			restTemplate.exchange(indexlink + "_doc"
+					, HttpMethod.POST, entity,Object.class);
+			log.info("============= INPUT DATA TO ES SUCESS ===============");
 		}
 		log.info("===INDEX END===");
-
 	}
 }
