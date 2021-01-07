@@ -64,12 +64,8 @@ public class SearchElasticController {
 		RestTemplate restTemplate = new RestTemplate();
 
 		//delete Index
-		try {
-			restTemplate.delete(indexlink);
-			log.info("=== DELETE SUCCESS ===");
-		}catch (HttpClientErrorException e) {
-			log.error(e);
-		}
+		restTemplate.delete(indexlink);
+		log.info("=== DELETE SUCCESS ===");
 
 		//create index
 		String requestParam ="{\n"
@@ -109,14 +105,8 @@ public class SearchElasticController {
 				+ "  \"settings\": { \"number_of_shards\": 3 }\n"
 				+ "}";
 		HttpEntity<String> request = new HttpEntity<String>(requestParam,headers);
-		try {
-			restTemplate.exchange(indexlink
-//					+ "mapping/product"
-					, HttpMethod.PUT, request,Object.class);
-			log.info("=== CREATE INDEX SUCCESS ===");
-		}catch (HttpClientErrorException e) {
-			log.error(e);
-		}
+		restTemplate.exchange(indexlink, HttpMethod.PUT, request,Object.class);
+		log.info("=== CREATE INDEX SUCCESS ===");
 
 		//get Data to push Index
 		List<ProductVO> lstProductVO = productService.getSearch();
