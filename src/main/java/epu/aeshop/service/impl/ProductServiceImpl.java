@@ -13,6 +13,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.gson.JsonArray;
@@ -100,8 +103,8 @@ public class ProductServiceImpl implements ProductService {
                 + "}";
 
         HttpEntity<String> entity = new HttpEntity<String>(paramBody, headers);
-        String indexlink = this.elasticsearchUrl + "es_nhatnam/";
-        ResponseEntity<String> results = rs.exchange(indexlink + "product" + "/_search", HttpMethod.POST,
+        String indexlink = this.elasticsearchUrl + "product/";
+        ResponseEntity<String> results = rs.exchange(indexlink + "/_search", HttpMethod.POST,
                 entity, String.class);
         String str = results.getBody();
         JsonParser parserGSON = new JsonParser();
@@ -126,4 +129,50 @@ public class ProductServiceImpl implements ProductService {
 
         return lstResult;
     }
+
+    @Override
+    public void reIndexIPContent(Product product) {
+        HttpHeaders headers = new HttpHeaders();
+        RestTemplate restTemplate = new RestTemplate();
+        String indexLink = this.elasticsearchUrl + "product/";
+        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        ResponseEntity<String> resultSearch = null;
+
+        resultSearch = restTemplate.exchange(indexLink + "/_search?q=id:" + product.getId(), HttpMethod.POST, null, String.class);
+        if (resultSearch != null) {
+            String indexID = "";
+            String fIp = resultSearch.getBody();
+            JsonParser parserGSON = new JsonParser();
+            JsonElement jsonTree = parserGSON.parse(fIp);
+            JsonObject histParent = null;
+            JsonArray histChild = null;
+            if (jsonTree.isJsonObject()) {
+                JsonObject jsonObject = jsonTree.getAsJsonObject();
+                histParent = jsonObject.getAsJsonObject("hits");
+                histChild = histParent.getAsJsonArray("hits");
+                if (histChild.size() > 0) {
+                    JsonObject fo = (JsonObject) histChild.get(0);
+                    indexID = (!fo.get("_id").toString().equals("null"))
+                            ? fo.get("_id").getAsString() : "";
+                }
+            }
+            if(!indexID.isEmpty()) {
+                // delete index
+                HttpEntity<String> bodyDelete = new HttpEntity<String>(headers);
+                ResponseEntity<String> responseDel = restTemplate.exchange(indexLink + "_doc/" + indexID, HttpMethod.DELETE, bodyDelete, String.class);
+            }
+
+            JsonObject productNew = new JsonObject();
+            productNew.addProperty("id", product.getId());
+            productNew.addProperty("name", product.getName().toLowerCase());
+            productNew.addProperty("description", product.getDescription().toLowerCase());
+            productNew.addProperty("origin", product.getOrigin());
+            productNew.addProperty("brand", product.getBrand());
+
+            HttpEntity<String> entity = new HttpEntity<String>(productNew.toString(), headers);
+            restTemplate.exchange(indexLink + "_doc"
+                    , HttpMethod.POST, entity,Object.class);
+        }
+    }
+
 }

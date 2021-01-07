@@ -1,6 +1,7 @@
 package epu.aeshop.controller;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -76,6 +77,22 @@ public class HomeController {
         return "index";
     }
 
+    @GetMapping("/search")
+    public String indexSearch(@RequestParam("searchWord") String searchWord ,Model model) throws Exception {
+        List<Product> products = new ArrayList<Product>();
+        if(searchWord == null) {
+            products = productService.getAll();
+        }else {
+            products = productService.searchByES(searchWord);
+        }
+        Collections.shuffle(products, new Random());
+        model.addAttribute("products", products);
+        List<Advert> adverts = advertService.getAdverts();
+        model.addAttribute("adverts", adverts);
+        List<Category> categories = categoryService.getCategories();
+        model.addAttribute("categories", categories);
+        return "index";
+    }
 
     // add product to shopping cart.
     @PostMapping(value = {"/product/addToCart"},
@@ -200,10 +217,10 @@ public class HomeController {
 
         return "index";
     }
-    
+
     @GetMapping("/category/add")
     public String addCategory(@RequestBody Category vo) {
-    	categoryService.insertCategory(vo);
+        categoryService.insertCategory(vo);
         return "index";
     }
 
