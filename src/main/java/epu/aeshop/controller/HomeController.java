@@ -1,21 +1,36 @@
 package epu.aeshop.controller;
 
+import java.security.Principal;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import epu.aeshop.entity.*;
-import epu.aeshop.service.*;
-
-import java.security.Principal;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-import java.util.stream.Collectors;
+import epu.aeshop.entity.Advert;
+import epu.aeshop.entity.Buyer;
+import epu.aeshop.entity.CartItem;
+import epu.aeshop.entity.Category;
+import epu.aeshop.entity.Product;
+import epu.aeshop.entity.User;
+import epu.aeshop.service.AdvertService;
+import epu.aeshop.service.BuyerService;
+import epu.aeshop.service.CartService;
+import epu.aeshop.service.CategoryService;
+import epu.aeshop.service.ProductService;
+import epu.aeshop.service.UserService;
 
 @Controller
 public class HomeController {
@@ -53,25 +68,6 @@ public class HomeController {
         List<Advert> adverts = advertService.getAdverts();
         model.addAttribute("adverts", adverts);
         //brings categories
-        List<Category> categories = categoryService.getCategories();
-        model.addAttribute("categories", categories);
-
-
-
-        return "index";
-    }
-
-
-    @GetMapping("/search")
-    public String indexSearch(@RequestParam("searchWord") String searchWord ,Model model) {
-        List<Product> products = productService.getAll().stream()
-                .filter(x -> x.getName().toLowerCase().contains(searchWord.toLowerCase())).collect(Collectors.toList());
-
-        Collections.shuffle(products, new Random());
-
-        model.addAttribute("products", products);
-        List<Advert> adverts = advertService.getAdverts();
-        model.addAttribute("adverts", adverts);
         List<Category> categories = categoryService.getCategories();
         model.addAttribute("categories", categories);
 

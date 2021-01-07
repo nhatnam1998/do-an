@@ -1,9 +1,15 @@
 package epu.aeshop.service.impl;
 
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
@@ -21,16 +27,11 @@ import epu.aeshop.repository.ProductRepository;
 import epu.aeshop.service.ProductService;
 import epu.aeshop.vo.ProductVO;
 
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-
 @Service
 public class ProductServiceImpl implements ProductService {
+
+    @Value("${elasticsearch.url}")
+    private String elasticsearchUrl;
 
     @Autowired
     private ProductRepository productRepository;
@@ -70,80 +71,59 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findProductsByName(name);
     }
 
-	@Override
-	public List<ProductVO> getSearch() {
-		// TODO Auto-generated method stub
-		return productRepository.getSearch();
-	}
-	
-	@Override
-	public List<ProductVO> searchByES(String searchWord) throws Exception{
-		return this.getDataFromElastic(searchWord);
-	}
-	
-	private List<ProductVO> getDataFromElastic(String searchText) throws Exception {
+    @Override
+    public List<ProductVO> getSearch() {
+        List<ProductVO> lstResult = productRepository.getSearch();
+        return lstResult;
+    }
 
-		HttpHeaders headers = new HttpHeaders();
-		RestTemplate rs = new RestTemplate();
-		rs.getMessageConverters().add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
+    @Override
+    public List<Product> searchByES(String searchWord) throws Exception {
+        return this.getDataFromElastic(searchWord);
+    }
 
-		if (searchText.contains("\"")) {
-			searchText = searchText.replace("\"", "\\\"");
-		}
-		String paramBody = "{\"query\": { \"bool\": { \"must\": { \"multi_match\": { \"query\" : \"" + searchText
-				+ "\", \"fields\": [\"contentSearch\", \"title^3\", \"summary\"]}}    ";
+    private List<Product> getDataFromElastic(String searchText) throws Exception {
 
-		paramBody = paramBody + "}},\"_source\": [\"id\", \"title\", \"summary\"]"
-				+ ", \"highlight\": { \"pre_tags\": [\"<mark>\"], \"post_tags\": [\"</mark>\"], \"fields\" : {\"title\" : {},\"summary\" : {}}}}";
+        HttpHeaders headers = new HttpHeaders();
+        RestTemplate rs = new RestTemplate();
+        String text = "*" + searchText.toLowerCase() + "*";
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        rs.getMessageConverters().add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
+        String paramBody = "{\n"
+                + "    \"query\": {\n"
+                + "        \"query_string\" : {\n"
+                + "            \"query\" : \"" + text + "\",\n"
+                + "            \"fields\": [\"name\", \"description^3\"]\n"
+                + "        }\n"
+                + "    },\n"
+                + "    \"_source\": [\"id\"]\n"
+                + "}";
 
-		HttpEntity<String> entity = new HttpEntity<String>(paramBody, headers);
-		String indexLink = "http://localhost:9200/";
-		ResponseEntity<String> results = rs.exchange(indexLink + "/_search?size=500", HttpMethod.POST, entity,
-				String.class);
-		String str = results.getBody();
-		JsonParser parserGSON = new JsonParser();
-		JsonElement jsonTree = parserGSON.parse(str);
-		JsonObject histParent = null;
-		JsonArray histChild = null;
-//		if (jsonTree.isJsonObject()) {
-//			JsonObject jsonObject = jsonTree.getAsJsonObject();
-//			histParent = jsonObject.getAsJsonObject(Constants.FieldES.HITS);
-//			histChild = histParent.getAsJsonArray(Constants.FieldES.HITS);
-//		}
-//
-//		List<ProductVO> lstProduct = new ArrayList<ProductVO>();
-//		List<String> listContentId = new ArrayList<String>();
-//
-//		for (int i = 0; i < histChild.size(); i++) {
-//			JsonObject object = (JsonObject) histChild.get(i);
-//			JsonObject source = object.getAsJsonObject(Constants.FieldES.SOURCE);
-//			String contentId = (!source.get(Constants.FieldES.ID).toString().equals(Constants.FieldES.DATA_NULL))
-//					? source.get(Constants.FieldES.ID).getAsString()
-//					: "0";
-//
-//			ProductVO product = new ProductVO();
-//
-//			JsonObject highLightData = object.getAsJsonObject(Constants.FieldES.HIGHLIGHT);
-//			if (highLightData != null) {
-//				for (Entry<String, JsonElement> entry : highLightData.entrySet()) {
-//					if (entry.getKey().contains("title")) {
-//						product.setTitle(entry.getValue().getAsJsonArray().get(0).getAsString());
-//					}
-//					if (entry.getKey().contains("summary")) {
-//						product.setSummary(entry.getValue().getAsJsonArray().get(0).getAsString());
-//					}
-//
-//				}
-//			}
-//			ipContentVO.setContentId(Long.valueOf(contentId));
-//			listContentId.add(contentId);
-//			listIPPanelEls.add(ipContentVO);
-//		}
+        HttpEntity<String> entity = new HttpEntity<String>(paramBody, headers);
+        String indexlink = this.elasticsearchUrl + "es_nhatnam/";
+        ResponseEntity<String> results = rs.exchange(indexlink + "product" + "/_search", HttpMethod.POST,
+                entity, String.class);
+        String str = results.getBody();
+        JsonParser parserGSON = new JsonParser();
+        JsonElement jsonTree = parserGSON.parse(str);
+        JsonObject histParent = null;
+        JsonArray histChild = null;
+        if (jsonTree.isJsonObject()) {
+            JsonObject jsonObject = jsonTree.getAsJsonObject();
+            histParent = jsonObject.getAsJsonObject("hits");
+            histChild = histParent.getAsJsonArray("hits");
+        }
 
+        List<Long> listIdProduct = new ArrayList<Long>();
+        for (int i = 0; i < histChild.size(); i++) {
+            JsonObject object = (JsonObject) histChild.get(i);
+            JsonObject source = object.getAsJsonObject("_source");
 
-		Map<List<String>, List<ProductVO>> result = new HashMap<List<String>, List<ProductVO>>();
-		List<ProductVO> listResult = new ArrayList<ProductVO>();
-//		result.put(listContentId, listIPPanelEls);
-		return listResult;
-	}
+            String id = (!source.get("id").toString().equals("-")) ? source.get("id").getAsString() : "0";
+                    listIdProduct.add(Long.valueOf(id));
+        }
+        List<Product> lstResult = productRepository.getDataForElasticSearch(listIdProduct);
+
+        return lstResult;
+    }
 }
