@@ -29,6 +29,7 @@ import epu.aeshop.entity.Seller;
 import epu.aeshop.repository.ProductRepository;
 import epu.aeshop.service.ProductService;
 import epu.aeshop.vo.ProductVO;
+import epu.aeshop.util.TextAnalyzer;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -89,7 +90,7 @@ public class ProductServiceImpl implements ProductService {
 
         HttpHeaders headers = new HttpHeaders();
         RestTemplate rs = new RestTemplate();
-        String text = "*" + searchText.toLowerCase() + "*";
+        String text = TextAnalyzer.preprocess(searchText);
         headers.setContentType(MediaType.APPLICATION_JSON);
         rs.getMessageConverters().add(0, new StringHttpMessageConverter(StandardCharsets.UTF_8));
         String paramBody = "{\n"
@@ -162,12 +163,7 @@ public class ProductServiceImpl implements ProductService {
                 ResponseEntity<String> responseDel = restTemplate.exchange(indexLink + "_doc/" + indexID, HttpMethod.DELETE, bodyDelete, String.class);
             }
 
-            JsonObject productNew = new JsonObject();
-            productNew.addProperty("id", product.getId());
-            productNew.addProperty("name", product.getName().toLowerCase());
-            productNew.addProperty("description", product.getDescription().toLowerCase());
-            productNew.addProperty("origin", product.getOrigin());
-            productNew.addProperty("brand", product.getBrand());
+            JsonObject productNew = product.toValueObject().toElasticsearchDocument();
 
             HttpEntity<String> entity = new HttpEntity<String>(productNew.toString(), headers);
             restTemplate.exchange(indexLink + "_doc"

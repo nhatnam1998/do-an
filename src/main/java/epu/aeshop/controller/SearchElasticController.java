@@ -78,24 +78,28 @@ public class SearchElasticController {
 				+ "      \"id\": { \"type\": \"long\" },\n"
 				+ "      \"name\": {\n"
 				+ "        \"type\": \"text\",\n"
+				+ "        \"analyzer\": \"vi_analyzer\",\n"
 				+ "        \"fields\": {\n"
 				+ "          \"keyword\": { \"type\": \"keyword\" }\n"
 				+ "        }\n"
 				+ "      },\n"
 				+ "      \"description\": {\n"
 				+ "        \"type\": \"text\",\n"
+				+ "        \"analyzer\": \"vi_analyzer\",\n"
 				+ "        \"fields\": {\n"
 				+ "          \"keyword\": { \"type\": \"keyword\" }\n"
 				+ "        }\n"
 				+ "      },\n"
 				+ "      \"origin\": {\n"
 				+ "        \"type\": \"text\",\n"
+				+ "        \"analyzer\": \"vi_analyzer\",\n"
 				+ "        \"fields\": {\n"
 				+ "          \"keyword\": { \"type\": \"keyword\" }\n"
 				+ "        }\n"
 				+ "      },\n"
 				+ "      \"brand\": {\n"
 				+ "        \"type\": \"text\",\n"
+				+ "        \"analyzer\": \"vi_analyzer\",\n"
 				+ "        \"fields\": {\n"
 				+ "          \"keyword\": { \"type\": \"keyword\" }\n"
 				+ "        }\n"
@@ -117,14 +121,9 @@ public class SearchElasticController {
 		//get Data to push Index
 		List<ProductVO> lstProductVO = productService.getSearch();
 		log.info("=== START INDEX ===");
-		for(ProductVO productVO : lstProductVO) {
-			log.info(productVO);
-			JsonObject json = new JsonObject();
-			json.addProperty("id", productVO.getId());
-			json.addProperty("name", productVO.getName().toLowerCase());
-			json.addProperty("description", productVO.getDescription() == null? null: productVO.getDescription().toLowerCase());
-			json.addProperty("origin", productVO.getOrigin() == null? null: productVO.getOrigin().toLowerCase());
-			json.addProperty("brand", productVO.getBrand() == null? null: productVO.getBrand().toLowerCase());
+		for(ProductVO item : lstProductVO) {
+			log.info(item);
+			JsonObject json = item.toElasticsearchDocument();
 
 			HttpEntity<String> entity = new HttpEntity<String>(json.toString(), headers);
 			restTemplate.exchange(indexlink + "_doc"

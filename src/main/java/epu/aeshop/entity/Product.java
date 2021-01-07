@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import epu.aeshop.vo.ProductVO;
 
 @Data
 @Entity
@@ -36,4 +37,7 @@ public class Product {
     private String origin;
     private String brand;
     
+    public ProductVO toValueObject() {
+        return new ProductVO(id, name, description, origin, brand);
+    }
 }
