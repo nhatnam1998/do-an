@@ -105,9 +105,9 @@
       <td colspan="3">
         <table>
           <tr>
-            <td class="title">JPA Market</td>
+            <td class="title">MAN's Store</td>
             <td></td>
-            <td th:text="'Invoice #: ' + ${order.id}"> </td>
+            <td th:text="'Id #: ' + ${order.id}"> </td>
           </tr>
         </table>
       </td>
@@ -118,9 +118,9 @@
         <table>
           <tr>
             <td>
-              JPA Market<br/>
-              1000 N 4th St<br/>
-              Fairfield, IA 52557
+             MAN's Store<br/>
+              75 Ho Tung Mau<br/>
+              Cau Giay, Ha Noi
             </td>
             <td></td>
             <td>
@@ -145,7 +145,7 @@
     <tr class="heading">
       <td>Item</td>
       <td>Quantity</td>
-      <td>Price</td>
+      <td>Total Price</td>
     </tr>
 
     <tr class="item" th:each="item: ${order.orderItems}">

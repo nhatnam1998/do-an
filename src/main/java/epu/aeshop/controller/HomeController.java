@@ -61,9 +61,11 @@ public class HomeController {
     public String index(Model model) {
         //brings products
         List<Product> products = productService.getAll();
-
-        Collections.shuffle(products, new Random());
-
+        if(products.size() > 10) {
+        	 Collections.shuffle(products, new Random(10));
+        }else {
+        	 Collections.shuffle(products, new Random());
+        }
         model.addAttribute("products", products);
         //brings the ads
         List<Advert> adverts = advertService.getAdverts();
