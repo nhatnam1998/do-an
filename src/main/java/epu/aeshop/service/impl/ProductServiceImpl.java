@@ -100,8 +100,15 @@ public class ProductServiceImpl implements ProductService {
                 + "            \"fields\": [\"name\", \"description^3\"]\n"
                 + "        }\n"
                 + "    },\n"
-                + "    \"_source\": [\"id\"]\n"
-                + "}";
+                + "    \"_source\": [\"id\"],\n"
+                + "\"highlight\": {\r\n" + 
+                "        \"pre_tags\": [\"<em>\"],\r\n" + 
+                "        \"post_tags\": [\"</em>\"],\r\n" + 
+                "        \"fields\": {\r\n" + 
+                "          \"name\": {},\r\n" + 
+                "          \"description\": {}\r\n" + 
+                "        }\r\n" + 
+                "      }}";
 
         HttpEntity<String> entity = new HttpEntity<String>(paramBody, headers);
         String indexlink = this.elasticsearchUrl + "product/";
