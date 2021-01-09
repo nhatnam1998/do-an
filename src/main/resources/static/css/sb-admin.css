@@ -10584,7 +10584,7 @@ body {
 
 .scroll-to-top {
   position: fixed;
-  right: 15px;
+  right: auto;
   bottom: 15px;
   display: none;
   width: 50px;

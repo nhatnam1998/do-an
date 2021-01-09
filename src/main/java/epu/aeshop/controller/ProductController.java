@@ -222,6 +222,8 @@ public class ProductController {
             if(product.getImage() != null){
                 updateProduct.setImage(product.getImage());
             }
+            updateProduct.setBrand(product.getBrand());
+            updateProduct.setOrigin(product.getOrigin());
             updateProduct.setAvailable(product.getAvailable());
             updateProduct.setCategory(category);
             productService.reIndexIPContent(updateProduct);
